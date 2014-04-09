@@ -1,0 +1,28 @@
+简述ANTLR语法规则
+ANTLR’s grammar notation.
+• Grammars consist of a set of rules that describe language syntax. There
+are rules for syntactic structure like stat and expr as well as rules for
+vocabulary symbols (tokens) such as identifiers and integers.
+• Rules starting with a lowercase letter comprise the parser rules.
+• Rules starting with an uppercase letter comprise the lexical (token) rules.
+• We separate the alternatives of a rule with the | operator, and we can
+group symbols with parentheses into subrules. For example, subrule ('*'|'/')
+matches either a multiplication symbol or a division symbol.
+
+
+
+这是我们的语法文件：http://media.pragprog.com/titles/tpantlr2/code/tour/Expr.g4
+grammar Expr;
+
+Importing Grammars : ANTLR支持import，可以把词法、语法文件分开来放，用到的时候import一下就可以。
+
+Handling Erroneous Input : ANTLR语法分析器会自动报告并跳过输内容的语法错误
+
+
+之前用重载listener写了一个简单的liist translator，现在用重载visitor来实现一个简单计算器。
+在写之前，先来了解一下ANTLR的label : 我们可以给每个规则（包括语法规则、词法规则）打上一个label，
+就是用来方便标识而已啦。而ANTLR生成Visitor代码的时候也会根据每个规则的label生成比较容易识别的代码。
+之前的语法文件Expr.g4打上label之后就变成了现在
+LabelExpr.g4 : http://media.pragprog.com/titles/tpantlr2/code/tour/LabeledExpr.g4
+主函数Calc.java : http://media.pragprog.com/titles/tpantlr2/code/tour/Calc.java
+重载Visitor : http://media.pragprog.com/titles/tpantlr2/code/tour/EvalVisitor.java
