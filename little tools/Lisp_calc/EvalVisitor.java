@@ -34,31 +34,66 @@ public class EvalVisitor extends ExprBaseVisitor <Integer> {
 	}
 	
 	@Override public Integer visitArithmetic(ExprParser.ArithmeticContext ctx) { 
-		return arithmetic(ctx.ARITHMETIC_OPERATOR().getText() , visit(ctx.args(0)), visit(ctx.args(1)));
+		String op = ctx.ARITHMETIC_OPERATOR().getText() ;
+		Integer result = visit(ctx.args(0)) ;
+		int size = ctx.args().size(), i = 1;
+		while( i < size ) {
+			result = arithmetic(op, result, visit(ctx.args(i)));
+			i = i + 1;
+		}
+		return result ;
 	}
 
 	@Override public Integer visitComparison(ExprParser.ComparisonContext ctx) { 
-		return comparison(ctx.COMPARISON_OPERATOR().getText(), visit(ctx.args(0)), visit(ctx.args(1))) == true ? 1 : 0 ;
+		String  op = ctx.COMPARISON_OPERATOR().getText() ;
+		int size = ctx.args().size(), i = 1;
+		while( i < size ) {
+			if( comparison(op, visit(ctx.args(i-1)), visit(ctx.args(i))) == false ) return 0;
+			i = i + 1 ;
+		}
+		return 1 ;
 	}
 
 	@Override public Integer visitAnd(ExprParser.AndContext ctx) {
-		return (visit(ctx.args(0)) != 0 && visit(ctx.args(1)) != 0) == true ? 1 : 0 ;
+		if( visit(ctx.args(0)) == 0 ) return 0;
+		int size = ctx.args().size(), i = 1;
+		while( i < size ) {
+			if (visit(ctx.args(i)) == 0) return 0;
+			i = i + 1 ;
+		}
+		return 1 ;
 	}
 
 	@Override public Integer visitOr(ExprParser.OrContext ctx) {
-		return (visit(ctx.args(0)) != 0 || visit(ctx.args(1)) != 0) == true ? 1 : 0 ;
+		if( visit(ctx.args(0)) != 0 ) return 1;
+		int size = ctx.args().size(), i = 1;
+		while( i < size ) {
+			if (visit(ctx.args(i)) != 0) return 1;
+			i = i + 1 ;
+		}
+		return 0 ;
 	}
 
 	@Override public Integer visitAssign(ExprParser.AssignContext ctx) { 
 		String id = ctx.ID().getText() ;
-		Integer value = visit(ctx.expr()) ;
+		Integer value = visit(ctx.args()) ;
 		memory.put(id, value) ;
 		return value ;
 	}
 
 	@Override public Integer visitIf(ExprParser.IfContext ctx) { 
 		if ( visit(ctx.expr(0)).equals(0) ) return visit(ctx.expr(2)) ;
-		else return visit(ctx.expr(1)) ;
+		else if(ctx.expr().size() > 1) return visit(ctx.expr(1)) ;
+		else return 0;
+	}
+
+	@Override public Integer visitCond(ExprParser.CondContext ctx) {
+		int size = ctx.expr().size(), i = 0;
+		while( i < size-1 ) {
+			if( visit(ctx.expr(i)) > 0 ) return visit(ctx.expr(i+1)) ;
+			i = i + 2 ;
+		}
+		return ((size & 1) == 0) ? 0 : visit(ctx.expr(size-1)) ;
 	}
 
 	@Override public Integer visitPrint(ExprParser.PrintContext ctx) {

@@ -1,31 +1,34 @@
 grammar Expr ;
 
-prog : (expr|print)+ ;
+prog : (expr|condition|print)+ ;
+condition : cond | iif;
 expr : arithmetic 
 	 | comparison
 	 | logical
 	 | assign 
-	 | iif
 	 | id	
 	 | iint
 	 ;
-args : iint
-	 | id
-	 | expr	
+args : expr	
+	 | condition
 	 ;
 
-arithmetic : '(' ARITHMETIC_OPERATOR args args ')' ;
-comparison : '(' COMPARISON_OPERATOR args args ')' ;
-logical    : '(' iand                 args args ')' #and
-		   | '(' ior 				 args args ')'	#or
+arithmetic : '(' ARITHMETIC_OPERATOR args args+ ')' ;
+comparison : '(' COMPARISON_OPERATOR args args+ ')' ;
+logical    : '(' iand                args args+ ')' #and
+		   | '(' ior 				 args args+ ')'	#or
 		   ;
-assign     : '(' define ID expr ')' ;
-iif        : '(' 'if' expr expr expr ')' 			#if
+assign     : '(' define ID args ')' ;
+iif        : '(' iiif expr expr expr? ')' 			#if
+		   ;
+cond 	   : '(' icond ('(' expr expr ')')+ ( '(' 'else' expr ')' )? ')'
 		   ;
 print	   : '(' 'print' args* ')'
 		   ;
 
 define : 'define' ;	
+iiif : 'if' ;
+icond: 'cond' ;
 id : ID ;
 iint : INT 		#int
 	 ;

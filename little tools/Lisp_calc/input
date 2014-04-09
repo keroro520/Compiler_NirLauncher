@@ -1,2 +1,9 @@
-(define a (+ 13 32 ))
-(print a 3 (define b a ))
+(define b (- (define a 3) 1))
+(define c (if (< a b) 7 8) )
+
+(define c
+  (cond 
+	((< a b) 1)
+	((== a b) 2)
+	(else 4)
+))
