@@ -1,6 +1,6 @@
 grammar Expr ;
 
-prog : expr+ ;
+prog : (expr|print)+ ;
 expr : arithmetic 
 	 | comparison
 	 | logical
@@ -21,6 +21,8 @@ logical    : '(' iand                 args args ')' #and
 		   ;
 assign     : '(' define ID expr ')' ;
 iif        : '(' 'if' expr expr expr ')' 			#if
+		   ;
+print	   : '(' 'print' args* ')'
 		   ;
 
 define : 'define' ;	

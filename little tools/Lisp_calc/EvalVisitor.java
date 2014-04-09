@@ -27,7 +27,7 @@ public class EvalVisitor extends ExprBaseVisitor <Integer> {
 		int childCount = ctx.getChildCount(), i = 0 ;
 		while( i < childCount ) {
 			Integer res = visit( ctx.getChild(i)) ;
-			System.out.println(res) ;
+			if(ctx.getChild(i) instanceof ExprParser.ExprContext) System.out.println(res) ;
 			i = i + 1 ; 
 		}
 		return 0 ;
@@ -61,6 +61,16 @@ public class EvalVisitor extends ExprBaseVisitor <Integer> {
 		else return visit(ctx.expr(1)) ;
 	}
 
+	@Override public Integer visitPrint(ExprParser.PrintContext ctx) {
+		int size = ctx.args().size() , i = 0 ;
+		while (i < size ) {
+			System.out.print( visit(ctx.args(i)) ) ;
+			System.out.print( ' ' ) ;
+			i = i + 1 ; 
+		}
+		System.out.println() ;
+		return 0;
+	}
 
 
 	@Override public Integer visitId(ExprParser.IdContext ctx) { 
