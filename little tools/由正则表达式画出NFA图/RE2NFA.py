@@ -6,6 +6,10 @@
 
 import os
 
+global null
+global point_num
+global edge
+
 null = '@'
 point_num = 0
 edge = set()
@@ -116,22 +120,25 @@ def func(s) :
     else : return (start, now)
 
 def output() :
-    f = file('dot.dot', 'w')
+    f = file('nfa.dot', 'w')
     print >> f, 'digraph {'
     print >> f, 'rankdir = LR'
 
     global edge
     edge = list(edge)
     edge.sort()
-    for (s,t,c) in edge : print >> f , str(s) + "->" + str(t) + '[label="' + str(c) + '"]'
+    for (s,t,c) in edge : 
+        if c == '@' : c = ' '
+        print >> f , str(s) + "->" + str(t) + '[label="' + str(c) + '"]'
     print >> f, '}'
     f.close()
-    os.system('dot -T png  -o test.png dot.dot')
+    os.system('dot -T png  -o nfa.png nfa.dot')
 
 def main() : 
     s = raw_input().replace(' ', '').replace('\t', '')
     func(s)
     output()
 
-if '__main__' == __name__ : 
-    main()
+#if '__main__' == __name__ : 
+#    main()
+main()
