@@ -1,0 +1,3 @@
+//状态类型在lex.hpp里定义
+//只定义终结节点
+node_id   node_type
