@@ -1,45 +1,36 @@
 #include <string.h>
-#define		NTOKENS			10000
+#include <stdbool.h>
 
-enum Type {
+typedef enum Type {
 	ROOT = 0,
 	LPARENT = 1,
 	RPARENT = 2,
 	ID = 3,
 	NUMBER = 4,
-	ADD = 5,
-	SUB = 6,
-	MUL = 7,
-	DIV = 8,
-	ASSIGN = 9,
-	DEFINE = 100,
-	IF     = 101,
-	NONTERMINAL = 90,
-	LEXEOF = -1
-};
 
-typedef		Type 	NodeType;
-class Node {
+	IF,
+	DEFINE,
+
+	LEXEOF = -1
+} Type;
+
+typedef		Type 	StatType;
+typedef struct Stat {
 	#define		NNODENEXT		256
-	public :
-	NodeType type;
+	StatType type;
 	bool isTerminal;
-	Node * next[NNODENEXT];
-	Node () {
-		isTerminal = false;
-		memset(next, 0, sizeof next);
-	}
-	Node (NodeType type, bool isTerminal) : type(type), isTerminal(isTerminal) { }
-} ;
+	struct Stat * next[NNODENEXT];
+} Stat;
+
+typedef 	struct Node 	Node;
 
 typedef		Type	TokenType;
-class Token {
-	public :
+typedef struct Token {
 	TokenType type;
-	int sym;
-	Token () { }
-	Token (TokenType type, int sym) : type(type), sym(sym) { }
-} ;
+	Node * lit;
+} Token;
 
-Token * tokens[NTOKENS];
-int token_index = 0;
+const char * extAlphas = "!$%&*+-./:<=>?@~^_";
+const char * alphas = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
+const char * nums   = "1234567890";
+const char * alnums = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!$%&*+-./:<=>?@~^_";

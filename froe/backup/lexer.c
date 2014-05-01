@@ -2,14 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include "error.hpp"
-#include "lexer.hpp"
-#define		debug		printf("!\n")
+#include "error.h"
+#include "lexer.h"
 static char yytext[1000];
 static char c;
 static int len = 0;				//yytext len
 static char * symTable[4096];
-static Node * statTable[4096];
+static Stat * statTable[4096];
 
 void buildDFA()
 {
@@ -18,29 +17,31 @@ void buildDFA()
 	fscanf(f, "%d %d", &n, &m);
 	for(int i = 0; i < n; i++) {
 		int x; 
-		NodeType type;
+		StatType type;
 		fscanf(f, "%d %d", &x, &type);
-		statTable[x] = new Node(type, true);
+		statTable[x] = malloc(sizeof (Stat)); 
+		statTable[x]->type = type;
+		statTable[x]->isTerminal = true;
 	}
 
 	while(m--) {
 		int a, b;
 		char c;
 		fscanf(f, "%d %d %c", &a, &b, &c);
-		if (!statTable[a]) statTable[a] = new Node();
-		if (!statTable[b]) statTable[b] = new Node();
+		if (!statTable[a]) statTable[a] = malloc(sizeof (Stat));
+		if (!statTable[b]) statTable[b] = malloc(sizeof (Stat));
 		statTable[a]->next[c] = statTable[b];
 	}
 	fclose(f);
 
-	const char * alphas = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_\0";
-	const char * nums   = "1234567890\0";
 	for (const char * ch = alphas; *ch; ch++) {
 		statTable[0]->next[*ch] = statTable[3];
 		statTable[3]->next[*ch] = statTable[3];
 	}
-	for (const char * ch = nums; *ch; ch++) {
+	for (const char * ch = alnums; *ch; ch++) {
 		statTable[3]->next[*ch] = statTable[3];
+	}
+	for (const char * ch = nums; *ch; ch++) {
 		statTable[0]->next[*ch] = statTable[4];
 		statTable[4]->next[*ch] = statTable[4];
 	}
@@ -50,22 +51,14 @@ int lookup(char * s)
 {
 	int i;
 	for (i = 0; symTable[i]; i++) {
-		if (strcmp(symTable[i], s) == 0 ) return i;
+		if (strcmp(symTable[i], s) == 0) return i;
 	}
 	symTable[i] = (char *) malloc((sizeof(char)) * len);
 	strcpy(symTable[i], s);
 	return i;
 }
 
-void insertToken(TokenType type)
-{
-	if (strcmp("define", yytext) == 0) tokens[token_index++] = new Token(DEFINE, -1);
-	else if (strcmp("if", yytext) == 0) tokens[token_index++] = new Token(IF, -1);
-	else tokens[token_index++] = new Token(type, lookup(yytext));
-	len = 0;
-}
-
-TokenType lex(const Node * p)
+TokenType lex(const Stat * p)
 {
 	if (c == EOF || !p->next[c]) {
 		if(p->isTerminal) {
@@ -84,15 +77,22 @@ TokenType lex(const Node * p)
 	return lex(p->next[oldc]);
 }
 
+TokenType nextToken()
+{
+	while(isspace(c)) c = getchar();
+	if (c == EOF) return LEXEOF;
+	len = 0;
+
+	StatType t = lex(statTable[0]);
+	if  (strcmp("define", yytext) == 0) return DEFINE;
+	else if (strcmp("if", yytext) == 0) return IF;
+	else return t;
+}
+
 int main()
 {
 	buildDFA();
 	c = getchar();
-	while (true) {
-		while(isspace(c)) c = getchar();
-		if (c == EOF) break;
-		insertToken( lex(statTable[0]) );
-	}
-	for(int i = 0; i < token_index; i++) printf("%s %d\n", symTable[tokens[i]->sym], tokens[i]->type);
+	while(nextToken() != LEXEOF) printf("%s\n", yytext);
 	return 0;
 }
