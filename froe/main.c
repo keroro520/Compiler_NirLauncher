@@ -4,15 +4,20 @@
 #include "parser.h"
 #include "eval.h"
 #include "lexer.h"
+#include "init.h"
+
 int main()
 {
+	initBuiltinNode();
+
+	Node * t;
 	while(1) {
+		printf(">> ");
 		Node * a = parser();
 		if (a == NULL) break;
-		printNode(a);
-		printf("   ===   ");
-		printNode(eval(a, &top)); 
-		puts("");
+		t = eval(a, &top);
+		printNode( t );
+		if (t) puts("");
 	}
 	return 0;
 }

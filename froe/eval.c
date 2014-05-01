@@ -32,6 +32,7 @@ Node * reply(ProcNode * f, ListNode * args, Env * env)
 
 Node * eval(Node * expr, Env * env) 
 {
+	if (!expr) return NULL;
 	Node * f;
 	Env * _env;
 	switch (expr->type) {
@@ -40,10 +41,13 @@ Node * eval(Node * expr, Env * env)
 		case PAIR   :
 			return eval((Node *) newCallNode(toPair(expr)->car, (ListNode *) toPair(expr)->cdr), env);
 		case CALL   : 
-			if (toCall(expr)->sym->type == SYMBOL) {									// ( (procedure a func) (args) )
-				f = lookup(env, toSym(toCall(expr)->sym));
-			} else {
-				f = eval(toCall(expr)->sym, env);									// (func (args))
+			if (toCall(expr)->sym->type == SYMBOL) {									// (func (args))
+				f = lookup(env, toSym(toCall(expr)->sym));					
+				if (f->type == BUILTIN) {													// (builtin-func (args))
+					return (toBui(f)->addr)(toCall(expr)->args, env);
+				}
+			} else {																	// ( (procedure a func) (args) )
+				f = eval(toCall(expr)->sym, env);
 			}
 			if (!f || f->type != PROC) {
 				error("ERROR eval\nType \"procedure\" expected, \"bint\" provided ");

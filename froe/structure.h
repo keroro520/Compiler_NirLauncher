@@ -1,5 +1,6 @@
 #ifndef		__STRUCTURE_H__
 #define		__STRUCTURE_H__
+
 #define		NEW(t)		malloc(sizeof (t))
 #define		toSym(a)	((SymNode *)(a))
 #define		toNum(a)	((NumNode *)(a))
@@ -9,6 +10,7 @@
 #define		toLambda(a)	((LambdaNode *)(a))
 #define		toDef(a)	((DefNode *)(a))
 #define		toProc(a)	((ProcNode*)(a))
+#define		toBui(a)	((BuiltinNode *)(a))
 
 typedef		int		Refer;
 typedef struct Env Env;
@@ -20,6 +22,7 @@ typedef enum NodeType {
 	LAMBDA,
 	CALL,
 	PROC,
+	BUILTIN,
 	LIST,
 	PAIR,
 } NodeType;
@@ -76,6 +79,10 @@ typedef struct ProcNode {
 	Env  * env;
 } ProcNode ;
 
+typedef struct BuiltinNode {
+	NodeType type;
+	Node * (* addr)(ListNode *, Env *);
+} BuiltinNode ;
 SymNode * newSymNode (Refer name) ;
 NumNode * newNumNode (int  value) ;
 PairNode* newPairNode(Node * car, Node * cdr) ;
@@ -84,6 +91,7 @@ LambdaNode* newLambdaNode(ListNode * formal, Node * body) ;
 DefNode* newDefNode(SymNode * sym, ListNode * formal, Node * body) ;
 CallNode* newCallNode(Node * sym, ListNode * args) ;
 ProcNode* newProcNode(ListNode * formal, Node * body, Env * env) ;
+BuiltinNode * newBuiltinNode (Node * (*)(ListNode *, Env *)) ;
 
 Refer  str2Refer(char *) ;
 char * refer2Str(Refer ) ;

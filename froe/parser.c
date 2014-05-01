@@ -51,10 +51,6 @@ Node * parsePair()
 		return a;
 	} else {
 		ListNode * b = parseList();
-		if(b->car == NULL) {
-			error("Type \"procedure\" expected, \"pair\" provided");
-			exit(0);
-		}
 		return (Node *) newPairNode(a, (Node *)b);
 	}
 }

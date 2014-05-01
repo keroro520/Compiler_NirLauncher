@@ -40,7 +40,7 @@ Token nextToken()
 		yytext[yylen++] = '\0';
 		ret.type = NUM;
 		ret.name = str2Refer(yytext);
-	} else if (isalpha(c)) {
+	} else if (isalpha(c) || isspec(c)) {
 		while (isalnum(c) || isspec(c)) {
 			yytext[yylen++] = c;
 			c = getchar();

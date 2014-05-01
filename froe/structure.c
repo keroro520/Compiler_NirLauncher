@@ -109,6 +109,14 @@ ProcNode* newProcNode(ListNode * formal, Node * body, Env * env)
 	return t;
 }
 
+BuiltinNode * newBuiltinNode(Node * (*addr)(ListNode *, Env *))
+{
+	BuiltinNode * t = NEW(BuiltinNode);
+	t->type = BUILTIN;
+	t->addr = addr;
+	return t;
+}
+
 void printNode(Node * a)
 {
 	if (a == NULL) return ;
