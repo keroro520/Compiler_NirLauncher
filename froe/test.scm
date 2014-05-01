@@ -1,5 +1,1 @@
-(+ 1 2)
-(define a (+ 2 2))
-(define (f x) (+ x a))
-(f 5)
-(+)
+(list 1 2 3 4)

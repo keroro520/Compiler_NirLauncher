@@ -17,7 +17,7 @@ int main()
 		if (a == NULL) break;
 		t = eval(a, &top);
 		printNode( t );
-		if (t) puts("");
+		puts("");
 	}
 	return 0;
 }

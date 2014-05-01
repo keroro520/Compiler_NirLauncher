@@ -96,6 +96,7 @@ BuiltinNode * newBuiltinNode (Node * (*)(ListNode *, Env *)) ;
 Refer  str2Refer(char *) ;
 char * refer2Str(Refer ) ;
 int refer2Num(Refer i) ;
+void printNode(Node * a) ;
 
 PairNode * cons(Node * a, Node * b) ;
 ListNode * append(ListNode * a, Node * b) ;

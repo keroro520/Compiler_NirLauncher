@@ -4,6 +4,57 @@
 #include "builtin.h"
 #define			error(s)		fprintf(stderr, "%s", (s))
 
+Node * buiCons(ListNode * args, Env * env)
+{
+	if (len((Node *)args) != 2) {
+		error("*** ERROR:eval:\n Wrong number of arguments: 2 expected        cons");
+		exit(0);
+	}
+	return (Node *) cons(eval(args->car, env), eval(args->cdr->car, env));
+}
+
+Node * buiList(ListNode * args, Env * env)
+{
+	if (args == NULL) return NULL;
+	ListNode * t = newListNode(eval(args->car, env), NULL), * s = t;
+	for(args = args->cdr; args; args = args->cdr) {
+		t = append(t, eval(args->car, env))->cdr;
+	}
+	return (Node *) s;
+}
+
+Node * buiCar (ListNode * args, Env * env)
+{
+	if (len((Node *) args) != 1) {
+		error("** ERROR:eval:\n Wrong number of arguments: 1 expected          car");
+		exit(0);
+	}
+	Node * t = eval(args->car, env);
+	if (t->type != PAIR) {
+		return toPair(t)->car;
+	} else if (t->type != LIST) {
+		return toList(t)->car;	
+	} else {
+		error("*** ERROR:car:\n Type \"pair\" expected  				car");
+		exit(0);
+	}
+}
+Node * buiCdr (ListNode * args, Env * env)
+{
+	if (len((Node *) args) != 1) {
+		error("** ERROR:eval:\n Wrong number of arguments: 1 expected          car");
+		exit(0);
+	}
+	Node * t = eval(args->car, env);
+	if (t->type != PAIR) {
+		return toPair(t)->cdr;
+	} else if (t->type != LIST) {
+		return (Node *) (toList(t)->car);
+	} else {
+		error("*** ERROR:car:\n Type \"pair\" expected  				cdr");
+		exit(0);
+	}
+}
 Node * buiQuit(ListNode* args, Env * env)
 {
 	exit(0);

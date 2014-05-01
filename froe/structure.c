@@ -119,17 +119,22 @@ BuiltinNode * newBuiltinNode(Node * (*addr)(ListNode *, Env *))
 
 void printNode(Node * a)
 {
+	static int endOfList = 1;
 	if (a == NULL) return ;
 	switch (a->type) {
-		case SYMBOL : printf("%s ", refer2Str(toSym(a)->name)); break;
-		case NUMBER : printf("%d ", toNum(a)->value); break;
+		case SYMBOL : printf("%s", refer2Str(toSym(a)->name)); break;
+		case NUMBER : printf("%d", toNum(a)->value); break;
 		case LIST   : 
+			if (endOfList) printf("("), endOfList = 0;
 			printNode(car(a));
+			if (cdr(a) == NULL) printf(")"), endOfList = 1;
+			else printf(" ");
 			printNode(cdr(a));
 			break;
 		case PAIR   :
 			printf("(");
 			printNode(car(a));
+			printf(" . ");
 			printNode(cdr(a));
 			printf(")");
 			break;
