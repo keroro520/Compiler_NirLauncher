@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "environment.h"
 #include "structure.h"
+#include "lexer.h"
 
+extern Node empty;
 PairNode * cons(Node * a,Node * b)
 {
     PairNode * t = NEW(PairNode);
@@ -69,7 +72,10 @@ ListNode * newListNode(Node * a, Node * b)		//a,b两个元素凑成一个list, �
 	ListNode * t = NEW(ListNode);
 	t->type = LIST;
 	t->car  = a;
-	if (b) t->cdr  = newListNode(b, NULL);
+	if (b) {
+		if (b->type == LIST) t->cdr = (ListNode *) b;
+		else t->cdr  = newListNode(b, NULL);
+	}
 	return t;
 }
 
@@ -138,27 +144,9 @@ void printNode(Node * a)
 			printNode(cdr(a));
 			printf(")");
 			break;
-		case LAMBDA :
-			printf("(lambda (");
-			printNode( (Node *) (toLambda(a)->formal) );
-			printf(") (");
-			printNode(toLambda(a)->body);
-			printf(")");
-			break;
-		case DEFINE :
-			printf("(define ");
-			if(toDef(a)->formal) {
-				printf("(");
-				printNode((Node *)(toDef(a)->sym));
-				printNode((Node *)(toDef(a)->formal));
-				printf(") ");
-			} else {
-				printNode((Node *)(toDef(a)->sym));
-			}
-			printNode(toDef(a)->body);
-			printf(")");
-			break;
-		default : printf("! what %d ?\n", a->type);
+		case PROC   :
+			printf("#<procedure : %s>", yytext);
+		default : ;
 	}
 }
 

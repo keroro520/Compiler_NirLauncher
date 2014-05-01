@@ -10,6 +10,9 @@ Node * buiCons(ListNode * args, Env * env)
 		error("*** ERROR:eval:\n Wrong number of arguments: 2 expected        cons");
 		exit(0);
 	}
+	if ( eval((Node *)(args->cdr->car), env)->type == LIST ) {
+		return (Node *) newListNode(eval(args->car, env), eval((Node *)(args->cdr->car), env));
+	}
 	return (Node *) cons(eval(args->car, env), eval(args->cdr->car, env));
 }
 

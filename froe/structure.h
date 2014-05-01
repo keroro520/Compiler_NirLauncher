@@ -25,6 +25,7 @@ typedef enum NodeType {
 	BUILTIN,
 	LIST,
 	PAIR,
+	EMPTY
 } NodeType;
 
 typedef struct Node {
@@ -83,6 +84,8 @@ typedef struct BuiltinNode {
 	NodeType type;
 	Node * (* addr)(ListNode *, Env *);
 } BuiltinNode ;
+
+
 SymNode * newSymNode (Refer name) ;
 NumNode * newNumNode (int  value) ;
 PairNode* newPairNode(Node * car, Node * cdr) ;
@@ -98,13 +101,14 @@ char * refer2Str(Refer ) ;
 int refer2Num(Refer i) ;
 void printNode(Node * a) ;
 
-PairNode * cons(Node * a, Node * b) ;
 ListNode * append(ListNode * a, Node * b) ;
+PairNode * cons(Node * a, Node * b) ;
 Node * car(Node * a) ;
 Node * cdr(Node * a) ;
 int len(Node * a) ;
 
 
 char * strTable[1984];
+Node empty;
 
 #endif
