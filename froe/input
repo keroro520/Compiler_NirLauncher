@@ -1,1 +1,6 @@
-(list "hello" " world")
+(list (list) (list) (list))
+(list 1 (list) (list))
+(cons (list) (list))
+(list)
+(cons 1 (list) )
+(list 1 2 3 4)

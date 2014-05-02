@@ -2,12 +2,15 @@
 #include "init.h"
 #include "environment.h"
 
+extern ListNode nil;
 void insertBuiltinNode(char * op, Node * (*f)(ListNode *, Env *) , Env * env) 
 {
 	updateEnv(env, newSymNode(str2Refer(op)), (Node *)(newBuiltinNode(f)));
 }
 void initBuiltinNode()
 {
+	nil.type = LIST; nil.car = NULL; nil.cdr = NULL;
+
 	insertBuiltinNode((char *)("+"), buiAdd, &top);
 	insertBuiltinNode((char *)("-"), buiSub, &top);
 	insertBuiltinNode((char *)("*"), buiMul, &top);

@@ -5,7 +5,7 @@
 #include "structure.h"
 #include "lexer.h"
 
-extern Node empty;
+extern ListNode nil;
 PairNode * cons(Node * a,Node * b)
 {
     PairNode * t = NEW(PairNode);
@@ -20,7 +20,9 @@ ListNode * append(ListNode * a, Node * b)
 	ListNode * t = NEW(ListNode);
 	t->type = LIST;
 	t->car  = b;
+	t->cdr  = &nil;
 	a->cdr  = t; 
+
 	return a;
 }
 Node * car(Node * a)
@@ -35,7 +37,7 @@ Node * cdr(Node * a)
 }
 int len(Node * a)
 {
-	if (a == NULL) return 0;
+	if (a == NULL || a == (Node *)&nil) return 0;
 	else if (a->type == LIST) return 1 + len((Node*)cdr(a));
 	else if (a->type == PAIR) return 2;
 	else return 1;
@@ -87,11 +89,14 @@ ListNode * newListNode(Node * a, Node * b)		//a,b两个元素凑成一个list, �
 {
 	ListNode * t = NEW(ListNode);
 	t->type = LIST;
-	t->car  = a;
-	if (b) {
-		if (b->type == LIST) t->cdr = (ListNode *) b;
-		else t->cdr  = newListNode(b, NULL);
-	}
+	t->car  = a ;
+
+	ListNode * tt = NEW(ListNode);
+	tt->type = LIST;
+	tt->car  = b ;
+	tt->cdr  = &nil;
+
+	t->cdr = tt;
 	return t;
 }
 
@@ -149,7 +154,7 @@ AtomNode * newAtomNode(Refer name)
 
 void printNode(Node * a)
 {
-	static int endOfList = 1;
+	static int startOfList = 1;
 	if (a == NULL) return ;
 	switch (a->type) {
 		case SYMBOL : printf("%s", refer2Str(toSym(a)->name)); 	  break;
@@ -157,11 +162,18 @@ void printNode(Node * a)
 		case NUMBER : printf("%d", toNum(a)->value); 			  break;
 		case ATOM	: printf("\'%s", refer2Str(toAtom(a)->name)); break;
 		case LIST   : 
-			if (endOfList) printf("("), endOfList = 0;
+			if (a == (Node *) &nil) {
+				printf("()"); 
+				break; 
+			}
+			if (startOfList) printf("(");
+			startOfList = 1;
 			printNode(car(a));
-			if (cdr(a) == NULL) printf(")"), endOfList = 1;
-			else printf(" ");
-			printNode(cdr(a));
+			startOfList = 0;
+
+			if (toList(a)->cdr == &nil) printf(")");
+			else printf(" "), printNode(cdr(a));
+			startOfList = 1;
 			break;
 		case PAIR   :
 			printf("(");

@@ -134,6 +134,5 @@ int len(Node * a) ;
 
 
 char * strTable[1984];
-Node * empty;
-
+ListNode nil;
 #endif

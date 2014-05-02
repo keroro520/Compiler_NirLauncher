@@ -10,19 +10,25 @@ Node * buiCons(ListNode * args, Env * env)
 		error("*** ERROR:eval:\n Wrong number of arguments: 2 expected        cons");
 		exit(0);
 	}
-	if ( eval((Node *)(args->cdr->car), env)->type == LIST ) {
-		return (Node *) newListNode(eval(args->car, env), eval((Node *)(args->cdr->car), env));
+	Node * t = eval((Node *)(args->cdr->car), env);
+	if ( t->type == LIST ) {
+		ListNode * tt = NEW(ListNode);
+		tt->type= LIST;
+		tt->car = eval(args->car, env);
+		tt->cdr = toList(t);
+		return (Node *)tt;
 	}
 	return (Node *) cons(eval(args->car, env), eval(args->cdr->car, env));
 }
 
 Node * buiList(ListNode * args, Env * env)
 {
-	if (args == NULL) return NULL;
-	ListNode * t = newListNode(eval(args->car, env), NULL), * s = t;
+	if (args->car == NULL) return (Node *) &nil;
+	ListNode * t = newListNode(eval(args->car, env), (Node *)&nil), * s = t;
 	for(args = args->cdr; args; args = args->cdr) {
 		t = append(t, eval(args->car, env))->cdr;
 	}
+	t->cdr = &nil;
 	return (Node *) s;
 }
 
@@ -80,12 +86,6 @@ Node * buiBegin (ListNode * args, Env * env)
 	return t;
 }
 
-Node * buiSet (ListNode * args, Env * env) 
-{
-//	if (len((Node *) args) != 1 || args->car->type != SYMBOL) {
-		//
-		return NULL;		//FIXME
-}
 Node * buiType(ListNode * args, Env * env)
 {
 	if (len((Node *) args) != 1) {

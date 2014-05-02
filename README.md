@@ -8,8 +8,6 @@ froe, Scheme interpreter
 有了大致的雏形
 
 TODO : 
-	[*] 引入empty '()			//话说'()到底是何物我已经忘记了
-	[*] what differences between `define` and `set!`
 
 
 
@@ -24,3 +22,7 @@ Situation :
 		//"表面上"实现了统一, 不过内部实现里面list和pair还是两种结构.
 		//可以通过(cons x (list 1 2 3))-->(list x 1 2 3)
 	
+	[*] 引入nil '()
+		应该是引入了~ '()是空list, 用一个全局变量nil表示
+
+	[*] 因为真正的define无法实现, 所以实际上set!跟define一样了...就不实现set!了

@@ -54,12 +54,14 @@ Token nextToken()
 		c = getchar();
 		if ((ret = nextToken()).type == LPARENT) {
 			yytext[yylen++] = '(';
-			int depth = 1;
+			yytext[yylen++] = c;
+			int depth = c == ')' ? 0 : 1;
 			while(depth) {
 				yytext[yylen++] = c = getchar();
 				if (c == ')') depth--;
 			}
 			yytext[yylen++] = '\0';
+			c = getchar();
 		}
 		ret.type = _ATOM;
 		ret.name = str2Refer(yytext);
