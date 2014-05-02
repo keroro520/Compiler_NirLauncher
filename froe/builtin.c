@@ -4,6 +4,8 @@
 #include "builtin.h"
 #define			error(s)		fprintf(stderr, "%s", (s))
 
+int getValue(Node * a, Env * env) ;
+
 Node * buiCons(ListNode * args, Env * env)
 {
 	if (len((Node *)args) != 2) {
@@ -118,13 +120,12 @@ Node * buiAdd(ListNode * args, Env * env)
 {
 	int ret = 0;
 	Node * t;
-	while(args) {
+	while(args != &nil) {
 		if ((t = eval(args->car, env)) == NULL || (t->type != NUMBER && t->type != SYMBOL)) {
 			error("*** ERROR:+:\n Type \"number\" expected");
 			exit(0);
 		}
-		if 		(t->type == NUMBER) ret += toNum(t)->value;
-		else if (t->type == SYMBOL) ret += toNum(lookup(env, toSym(t)))->value;
+		ret += getValue(t, env);
 		args = args->cdr;
 	}
 	return (Node *) newNumNode(ret);
@@ -133,13 +134,25 @@ Node * buiSub(ListNode * args, Env * env)
 {
 	int ret = 0;
 	Node * t;
-	while(args) {
+
+	if (len((Node *) args) < 2) {
+		error("*** ERROR:sub:\n Wrong number of arguments: -2 expected");
+		exit(0);
+	}
+	if ((t = eval(args->car, env)) == NULL || (t->type != NUMBER && t->type != SYMBOL)) {
+		error("*** ERROR:+:\n Type \"number\" expected");
+		exit(0);
+	}
+
+	ret = getValue(t, env);
+	args = args->cdr;
+
+	while(args != &nil) {
 		if ((t = eval(args->car, env)) == NULL || (t->type != NUMBER && t->type != SYMBOL)) {
 			error("*** ERROR:+:\n Type \"number\" expected");
 			exit(0);
 		}
-		if 		(t->type == NUMBER) ret -= toNum(t)->value;
-		else if (t->type == SYMBOL) ret -= toNum(lookup(env, toSym(t)))->value;
+		ret -= getValue(t, env);
 		args = args->cdr;
 	}
 	return (Node *) newNumNode(ret);
@@ -148,7 +161,7 @@ Node * buiMul(ListNode * args, Env * env)
 {
 	int ret = 1;
 	Node * t;
-	while(args) {
+	while(args != &nil) {
 		if ((t = eval(args->car, env)) == NULL || (t->type != NUMBER && t->type != SYMBOL)) {
 			error("*** ERROR:+:\n Type \"number\" expected");
 			exit(0);
@@ -170,11 +183,11 @@ Node * buiDiv(ListNode * args, Env * env)
 		} else if (t->type == NUMBER) ret = toNum(t)->value;
 		  else if (t->type == SYMBOL) ret = toNum(lookup(env, toSym(t)))->value;
 		args = args->cdr;
-	} else if (args == NULL) {
+	} else if (args == &nil) {
 		error("*** ERROR:eval:\n Wrong number of arguments: -2 expected, 0 provided");
 		exit(0);
 	}
-	while(args) {
+	while(args != &nil) {
 		if ((t = eval(args->car, env)) == NULL || (t->type != NUMBER && t->type != SYMBOL)) {
 			error("*** ERROR:+:\n Type \"number\" expected");
 			exit(0);
@@ -184,4 +197,30 @@ Node * buiDiv(ListNode * args, Env * env)
 		args = args->cdr;
 	}
 	return (Node *) newNumNode(ret);
+}
+
+int getValue(Node * a, Env * env)
+{
+	if (a->type == NUMBER) return toNum(a)->value;
+	else if (a->type == SYMBOL) {
+		Node * t = lookup(env, toSym(a));
+		if (t->type == NUMBER) return toNum(t)->value;
+	}
+	error("*** ERROR::\n Type \"number\" expected");
+	exit(0);
+}
+Node * buiEqu(ListNode * args, Env * env)
+{
+	if (len((Node *) args) < 2) {
+		error("*** ERROR:eval:\n Wrong number of arguments: -at least 2 expected");
+		exit(0);
+	}
+	int value = getValue(eval(args->car, env), env);
+	for (ListNode * it = args; it != &nil; it = it->cdr) {
+		getValue(eval(it->car, env), env);
+	}
+	for (ListNode * it = args->cdr; it != &nil; it = it->cdr) {
+		if (getValue(eval(it->car, env), env) != value) return (Node *) newBoolNode(0);
+	}
+	return (Node *) newBoolNode(1);
 }

@@ -23,4 +23,5 @@ void initBuiltinNode()
 	insertBuiltinNode((char *)("cdr") , buiCdr , &top);
 	insertBuiltinNode((char *)("begin") , buiBegin , &top);
 	insertBuiltinNode((char *)("if") ,  buiIf  , &top);
+	insertBuiltinNode((char *)("=") ,   buiEqu , &top);
 }

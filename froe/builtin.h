@@ -20,4 +20,5 @@ Node * buiSet (ListNode * args, Env * env) ;
 Node * buiType(ListNode * args, Env * env) ;
 Node * buiQuit(ListNode * args, Env * env) ;
 
+Node * buiEqu(ListNode * args, Env * env)  ;
 #endif

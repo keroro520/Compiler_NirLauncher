@@ -161,6 +161,7 @@ void printNode(Node * a)
 		case STR    : printf("%s", refer2Str(toStr(a)->name)); 	  break;
 		case NUMBER : printf("%d", toNum(a)->value); 			  break;
 		case ATOM	: printf("\'%s", refer2Str(toAtom(a)->name)); break;
+		case BOOL	: printf("#%c",toBool(a)->value == 0 ? 'f' : 't'); break;
 		case LIST   : 
 			if (a == (Node *) &nil) {
 				printf("()"); 
