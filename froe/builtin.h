@@ -8,6 +8,7 @@ Node * buiCons(ListNode * args, Env * env) ;
 Node * buiList(ListNode * args, Env * env) ;
 Node * buiCar (ListNode * args, Env * env) ;
 Node * buiCdr (ListNode * args, Env * env) ;
+Node * buiNull(ListNode * args, Env * env) ;
 
 Node * buiAdd(ListNode *  args, Env * env) ;
 Node * buiSub(ListNode *  args, Env * env) ;
@@ -21,4 +22,8 @@ Node * buiType(ListNode * args, Env * env) ;
 Node * buiQuit(ListNode * args, Env * env) ;
 
 Node * buiEqu(ListNode * args, Env * env)  ;
+Node * buiGt(ListNode * args, Env * env)   ;
+Node * buiLt(ListNode * args, Env * env)   ;
+Node * buiGE(ListNode * args, Env * env)   ;
+Node * buiLE(ListNode * args, Env * env)   ;
 #endif

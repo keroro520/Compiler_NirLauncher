@@ -9,7 +9,7 @@ int getValue(Node * a, Env * env) ;
 Node * buiCons(ListNode * args, Env * env)
 {
 	if (len((Node *)args) != 2) {
-		error("*** ERROR:eval:\n Wrong number of arguments: 2 expected        cons");
+		error("*** ERROR:cons:\n Wrong number of arguments: 2 expected        cons");
 		exit(0);
 	}
 	Node * t = eval((Node *)(args->cdr->car), env);
@@ -27,7 +27,7 @@ Node * buiList(ListNode * args, Env * env)
 {
 	if (args->car == NULL) return (Node *) &nil;
 	ListNode * t = newListNode(eval(args->car, env), (Node *)&nil), * s = t;
-	for(args = args->cdr; args; args = args->cdr) {
+	for(args = args->cdr; args && args != &nil; args = args->cdr) {
 		t = append(t, eval(args->car, env))->cdr;
 	}
 	t->cdr = &nil;
@@ -36,15 +36,15 @@ Node * buiList(ListNode * args, Env * env)
 
 Node * buiCar (ListNode * args, Env * env)
 {
-	if (len((Node *) args) != 1) {
-		error("** ERROR:eval:\n Wrong number of arguments: 1 expected          car");
+	Node * t = eval(args->car, env);					// 比如(list 1) 其实我表示成了(list 1 '())   =_=   自己栽在自己手上了..
+	if (len(t) != 1) {
+		error("** ERROR:car :\n Wrong number of arguments: 1 expected          car");
 		exit(0);
 	}
-	Node * t = eval(args->car, env);
 	if (t->type != PAIR) {
-		return toPair(t)->car;
-	} else if (t->type != LIST) {
-		return toList(t)->car;	
+		return eval(toPair(t)->car, env);
+	} else if (t->type != LIST && t != (Node *) &nil) {
+		return eval(toList(t)->car, env);
 	} else {
 		error("*** ERROR:car:\n Type \"pair\" expected  				car");
 		exit(0);
@@ -52,21 +52,32 @@ Node * buiCar (ListNode * args, Env * env)
 }
 Node * buiCdr (ListNode * args, Env * env)
 {
-	if (len((Node *) args) != 1) {
-		error("** ERROR:eval:\n Wrong number of arguments: 1 expected          car");
+	Node * t = eval((args->car), env);
+	if (len(t) != 1) {
+		error("** ERROR:cdr :\n Wrong number of arguments: 1 expected          cdr");
 		exit(0);
 	}
-	Node * t = eval(args->car, env);
 	if (t->type != PAIR) {
-		return toPair(t)->cdr;
-	} else if (t->type != LIST) {
-		return (Node *) (toList(t)->car);
+		printf("!\n");
+		printNode(t);
+		return eval(toPair(t)->cdr, env);
+	} else if (t->type != LIST && t != (Node *) &nil) {
+		return eval((Node *)toList(t)->cdr, env);
 	} else {
-		error("*** ERROR:car:\n Type \"pair\" expected  				cdr");
+		error("*** ERROR:cdr:\n Type \"pair\" expected  				cdr");
 		exit(0);
 	}
 }
 
+Node * buiNull(ListNode * args, Env * env)
+{
+	if (len((Node *) args) != 1) {
+		error("*** ERROR:null?:\n Wrong number of arguments: 1 expected") ;
+		exit(0);
+	}
+	Node * t = eval(args->car, env); 
+	return (t == NULL || t == (Node *) &nil) ? (Node *) newBoolNode(1) : (Node *) newBoolNode(0) ;
+}
 Node * buiIf(ListNode * args, Env * env)
 {
 	if (len((Node *) args) < 2 || len((Node *) args) > 3) {
@@ -91,7 +102,7 @@ Node * buiBegin (ListNode * args, Env * env)
 Node * buiType(ListNode * args, Env * env)
 {
 	if (len((Node *) args) != 1) {
-		error("** ERROR:eval:\n Wrong number of arguments: 1 expected          type");
+		error("** ERROR:type:\n Wrong number of arguments: 1 expected          type");
 		exit(0);
 	}
 		
@@ -140,7 +151,7 @@ Node * buiSub(ListNode * args, Env * env)
 		exit(0);
 	}
 	if ((t = eval(args->car, env)) == NULL || (t->type != NUMBER && t->type != SYMBOL)) {
-		error("*** ERROR:+:\n Type \"number\" expected");
+		error("*** ERROR:-:\n Type \"number\" expected");
 		exit(0);
 	}
 
@@ -149,7 +160,7 @@ Node * buiSub(ListNode * args, Env * env)
 
 	while(args != &nil) {
 		if ((t = eval(args->car, env)) == NULL || (t->type != NUMBER && t->type != SYMBOL)) {
-			error("*** ERROR:+:\n Type \"number\" expected");
+			error("*** ERROR:-:\n Type \"number\" expected");
 			exit(0);
 		}
 		ret -= getValue(t, env);
@@ -163,7 +174,7 @@ Node * buiMul(ListNode * args, Env * env)
 	Node * t;
 	while(args != &nil) {
 		if ((t = eval(args->car, env)) == NULL || (t->type != NUMBER && t->type != SYMBOL)) {
-			error("*** ERROR:+:\n Type \"number\" expected");
+			error("*** ERROR:*:\n Type \"number\" expected");
 			exit(0);
 		}
 		if 		(t->type == NUMBER) ret *= toNum(t)->value;
@@ -178,18 +189,18 @@ Node * buiDiv(ListNode * args, Env * env)
 	int ret = 1;
 	if (len((Node *)args) >= 2) {
 		if ((t = eval(args->car, env)) == NULL || (t->type != NUMBER && t->type != SYMBOL)) {
-			error("*** ERROR:+:\n Type \"number\" expected");
+			error("*** ERROR:/:\n Type \"number\" expected");
 			exit(0);
 		} else if (t->type == NUMBER) ret = toNum(t)->value;
 		  else if (t->type == SYMBOL) ret = toNum(lookup(env, toSym(t)))->value;
 		args = args->cdr;
 	} else if (args == &nil) {
-		error("*** ERROR:eval:\n Wrong number of arguments: -2 expected, 0 provided");
+		error("*** ERROR:/:\n Wrong number of arguments: -2 expected, 0 provided");
 		exit(0);
 	}
 	while(args != &nil) {
 		if ((t = eval(args->car, env)) == NULL || (t->type != NUMBER && t->type != SYMBOL)) {
-			error("*** ERROR:+:\n Type \"number\" expected");
+			error("*** ERROR:/:\n Type \"number\" expected");
 			exit(0);
 		}
 		if 		(t->type == NUMBER) ret /= toNum(t)->value;
@@ -206,13 +217,13 @@ int getValue(Node * a, Env * env)
 		Node * t = lookup(env, toSym(a));
 		if (t->type == NUMBER) return toNum(t)->value;
 	}
-	error("*** ERROR::\n Type \"number\" expected");
+	error("*** ERROR:getValue:\n Type \"number\" expected");
 	exit(0);
 }
 Node * buiEqu(ListNode * args, Env * env)
 {
 	if (len((Node *) args) < 2) {
-		error("*** ERROR:eval:\n Wrong number of arguments: -at least 2 expected");
+		error("*** ERROR:=:\n Wrong number of arguments: -at least 2 expected");
 		exit(0);
 	}
 	int value = getValue(eval(args->car, env), env);
@@ -221,6 +232,70 @@ Node * buiEqu(ListNode * args, Env * env)
 	}
 	for (ListNode * it = args->cdr; it != &nil; it = it->cdr) {
 		if (getValue(eval(it->car, env), env) != value) return (Node *) newBoolNode(0);
+	}
+	return (Node *) newBoolNode(1);
+}
+Node * buiGt(ListNode * args, Env * env)
+{
+	if (len((Node *) args) < 2) {
+		error("*** ERROR:<:\n Wrong number of arguments: -at least 2 expected");
+		exit(0);
+	}
+	int value = getValue(eval(args->car, env), env), t;
+	for (ListNode * it = args; it != &nil; it = it->cdr) {
+		getValue(eval(it->car, env), env);
+	}
+	for (ListNode * it = args->cdr; it != &nil; it = it->cdr) {
+		if ((t = getValue(eval(it->car, env), env)) <= value) return (Node *) newBoolNode(0);
+		value = t;
+	}
+	return (Node *) newBoolNode(1);
+}
+Node * buiLt(ListNode * args, Env * env)
+{
+	if (len((Node *) args) < 2) {
+		error("*** ERROR:>:\n Wrong number of arguments: -at least 2 expected");
+		exit(0);
+	}
+	int value = getValue(eval(args->car, env), env), t;
+	for (ListNode * it = args; it != &nil; it = it->cdr) {
+		getValue(eval(it->car, env), env);
+	}
+	for (ListNode * it = args->cdr; it != &nil; it = it->cdr) {
+		if ((t = getValue(eval(it->car, env), env)) >= value) return (Node *) newBoolNode(0);
+		value = t;
+	}
+	return (Node *) newBoolNode(1);
+}
+Node * buiGE(ListNode * args, Env * env)
+{
+	if (len((Node *) args) < 2) {
+		error("*** ERROR:<=:\n Wrong number of arguments: -at least 2 expected");
+		exit(0);
+	}
+	int value = getValue(eval(args->car, env), env), t;
+	for (ListNode * it = args; it != &nil; it = it->cdr) {
+		getValue(eval(it->car, env), env);
+	}
+	for (ListNode * it = args->cdr; it != &nil; it = it->cdr) {
+		if ((t = getValue(eval(it->car, env), env)) < value) return (Node *) newBoolNode(0);
+		value = t;
+	}
+	return (Node *) newBoolNode(1);
+}
+Node * buiLE(ListNode * args, Env * env)
+{
+	if (len((Node *) args) < 2) {
+		error("*** ERROR:>=:\n Wrong number of arguments: -at least 2 expected");
+		exit(0);
+	}
+	int value = getValue(eval(args->car, env), env), t;
+	for (ListNode * it = args; it != &nil; it = it->cdr) {
+		getValue(eval(it->car, env), env);
+	}
+	for (ListNode * it = args->cdr; it != &nil; it = it->cdr) {
+		if ((t = getValue(eval(it->car, env), env)) > value) return (Node *) newBoolNode(0);
+		value = t;
 	}
 	return (Node *) newBoolNode(1);
 }

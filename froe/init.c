@@ -21,7 +21,12 @@ void initBuiltinNode()
 	insertBuiltinNode((char *)("list"), buiList, &top);
 	insertBuiltinNode((char *)("car") , buiCar , &top);
 	insertBuiltinNode((char *)("cdr") , buiCdr , &top);
+	insertBuiltinNode((char *)("null?"),buiNull, &top);
 	insertBuiltinNode((char *)("begin") , buiBegin , &top);
 	insertBuiltinNode((char *)("if") ,  buiIf  , &top);
 	insertBuiltinNode((char *)("=") ,   buiEqu , &top);
+	insertBuiltinNode((char *)("<") ,   buiGt  , &top);
+	insertBuiltinNode((char *)(">") ,   buiLt  , &top);
+	insertBuiltinNode((char *)("<=") ,  buiGE  , &top);
+	insertBuiltinNode((char *)(">=") ,  buiLE  , &top);
 }

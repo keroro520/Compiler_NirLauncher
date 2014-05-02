@@ -85,6 +85,7 @@ Token nextToken()
 		switch (c) {
 			case '(' : ret.type = LPARENT; c = getchar(); break;
 			case ')' : ret.type = RPARENT; c = getchar(); break;
+			case ';' : while(getchar() != '\n') ; c = getchar(); return nextToken(); 
 			default  : 
 				lexError("Unreganize character", c);
 				exit(0);

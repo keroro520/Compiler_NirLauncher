@@ -11,7 +11,8 @@ Node * lookup(Env * env, SymNode * sym)
 		if (env->sym[i] != NULL) return env->sym[i];
 		env = env->father;
 	} while (env) ;
-	error("*** ERROR:eval:\nUnbound variable");
+	printf("!! %s !!\n", refer2Str(sym->name));
+	error("*** ERROR:lookup:\nUnbound variable");
 	exit(0);
 }
 void updateEnv(Env * env, SymNode * sym, Node * value) 

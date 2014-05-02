@@ -199,7 +199,7 @@ Refer str2Refer(char * s)
 		fprintf(stderr, "Out of space");
 		exit(0);
 	}
-	strTable[i] = malloc((sizeof (char)) * strlen(s));
+	strTable[i] = malloc((sizeof (char)) * (1 + strlen(s)));
 	strcpy(strTable[i], s);
 	return i;
 }
