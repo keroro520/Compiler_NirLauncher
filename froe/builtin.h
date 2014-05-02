@@ -13,6 +13,11 @@ Node * buiAdd(ListNode *  args, Env * env) ;
 Node * buiSub(ListNode *  args, Env * env) ;
 Node * buiMul(ListNode *  args, Env * env) ;
 Node * buiDiv(ListNode *  args, Env * env) ;
+
+Node * buiIf  (ListNode * args, Env * env) ;
+Node * buiBegin (ListNode * args, Env * env) ;
+Node * buiSet (ListNode * args, Env * env) ;
+Node * buiType(ListNode * args, Env * env) ;
 Node * buiQuit(ListNode * args, Env * env) ;
 
 #endif

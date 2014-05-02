@@ -7,6 +7,10 @@ enum TokenType {
 	RPARENT = 11,
 	ID		= 31,
 	NUM		= 32,
+	STRING	= 33,
+	BOOLTRUE	= 34,
+	BOOLFALSE	= 35,
+	_ATOM	= 36,
 
 	LEXEOF	= EOF
 } ;

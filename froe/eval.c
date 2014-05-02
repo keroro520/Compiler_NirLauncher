@@ -36,7 +36,7 @@ Node * eval(Node * expr, Env * env)
 	Node * f;
 	Env * _env;
 	switch (expr->type) {
-		case NUMBER : case LIST : return expr;
+		case NUMBER : case STR : case BOOL : case LIST : case ATOM : return expr;
 		case SYMBOL : return lookup(env, toSym(expr));
 		case PAIR   :
 			return eval((Node *) newCallNode(toPair(expr)->car, (ListNode *) toPair(expr)->cdr), env);

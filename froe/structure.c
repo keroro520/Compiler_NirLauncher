@@ -50,6 +50,22 @@ SymNode * newSymNode (Refer name)
 	return t;
 }
 
+StrNode * newStrNode (Refer name)
+{
+	StrNode * t = NEW(StrNode);
+	t->type = STR;
+	t->name = name;
+	return t;
+}
+
+BoolNode * newBoolNode (int value)
+{
+	BoolNode * t = NEW(BoolNode);
+	t->type = BOOL;
+	t->value = value;
+	return t;
+}
+
 NumNode * newNumNode (int  value) 
 {
 	NumNode * t = NEW(NumNode);
@@ -123,13 +139,23 @@ BuiltinNode * newBuiltinNode(Node * (*addr)(ListNode *, Env *))
 	return t;
 }
 
+AtomNode * newAtomNode(Refer name)
+{
+	AtomNode * t = NEW(AtomNode);
+	t->type = ATOM;
+	t->name = name;
+	return t;
+}
+
 void printNode(Node * a)
 {
 	static int endOfList = 1;
 	if (a == NULL) return ;
 	switch (a->type) {
-		case SYMBOL : printf("%s", refer2Str(toSym(a)->name)); break;
-		case NUMBER : printf("%d", toNum(a)->value); break;
+		case SYMBOL : printf("%s", refer2Str(toSym(a)->name)); 	  break;
+		case STR    : printf("%s", refer2Str(toStr(a)->name)); 	  break;
+		case NUMBER : printf("%d", toNum(a)->value); 			  break;
+		case ATOM	: printf("\'%s", refer2Str(toAtom(a)->name)); break;
 		case LIST   : 
 			if (endOfList) printf("("), endOfList = 0;
 			printNode(car(a));
@@ -145,7 +171,7 @@ void printNode(Node * a)
 			printf(")");
 			break;
 		case PROC   :
-			printf("#<procedure : %s>", yytext);
+			printf("#<procedure :>" );
 		default : ;
 	}
 }

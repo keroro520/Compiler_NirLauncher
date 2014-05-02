@@ -87,8 +87,14 @@ Node * parser()
 			return NULL;
 		case NUM :
 			return (Node *) newNumNode(refer2Num(tok.name));
-		case ID :
+		case ID  :
 			return (Node *) newSymNode(tok.name);
+		case STRING :
+			return (Node *) newStrNode(tok.name);
+		case BOOLTRUE : case BOOLFALSE :
+			return (Node *) newBoolNode(tok.type == BOOLTRUE ? 1 : 0);
+		case _ATOM  :
+			return (Node *) newAtomNode(tok.name);
 		case LEXEOF :
 			if (depth != 0) {
 				error("Unmatched parents"); 

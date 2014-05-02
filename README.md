@@ -9,7 +9,7 @@ froe, Scheme interpreter
 
 TODO : 
 	[*] 引入empty '()			//话说'()到底是何物我已经忘记了
-	[*] 现在基本类型还只有int, 之后要引入复数, string
+	[*] what differences between `define` and `set!`
 
 
 

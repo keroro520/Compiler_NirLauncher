@@ -1,3 +1,4 @@
+#include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdbool.h>
@@ -40,6 +41,36 @@ Token nextToken()
 		yytext[yylen++] = '\0';
 		ret.type = NUM;
 		ret.name = str2Refer(yytext);
+	} else if (c == '\"') {
+		while ((c = getchar()) != '\"') {
+			if (c == '\\') yytext[yylen++] = getchar();
+			else 		   yytext[yylen++] = c;
+		}
+		yytext[yylen++] = '\0';
+		ret.type = STRING;
+		ret.name = str2Refer(yytext);
+		c = getchar();
+	} else if (c == '\'') {
+		c = getchar();
+		if ((ret = nextToken()).type == LPARENT) {
+			yytext[yylen++] = '(';
+			int depth = 1;
+			while(depth) {
+				yytext[yylen++] = c = getchar();
+				if (c == ')') depth--;
+			}
+			yytext[yylen++] = '\0';
+		}
+		ret.type = _ATOM;
+		ret.name = str2Refer(yytext);
+	} else if (c == '#') {
+		c = getchar();
+		ret = nextToken();
+		if (0 != strcmp(yytext, "t") && 0 != strcmp(yytext, "f")) {
+			lexError("Unreganize character", yytext[0]);
+			exit(0);
+		}
+		ret.type = yytext[0] == 't' ? BOOLTRUE : BOOLFALSE;
 	} else if (isalpha(c) || isspec(c)) {
 		while (isalnum(c) || isspec(c)) {
 			yytext[yylen++] = c;

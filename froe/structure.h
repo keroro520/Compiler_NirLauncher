@@ -3,6 +3,8 @@
 
 #define		NEW(t)		malloc(sizeof (t))
 #define		toSym(a)	((SymNode *)(a))
+#define		toStr(a)	((StrNode *)(a))
+#define		toBool(a)	((BoolNode*)(a))
 #define		toNum(a)	((NumNode *)(a))
 #define		toList(a)	((ListNode*)(a))
 #define		toPair(a)	((PairNode*)(a))
@@ -11,6 +13,10 @@
 #define		toDef(a)	((DefNode *)(a))
 #define		toProc(a)	((ProcNode*)(a))
 #define		toBui(a)	((BuiltinNode *)(a))
+#define		toAtom(a)	((AtomNode*)(a))
+
+#define		cdar		cdr->car
+#define		cddar		cdr->cdr->car
 
 typedef		int		Refer;
 typedef struct Env Env;
@@ -18,6 +24,8 @@ typedef struct Env Env;
 typedef enum NodeType {
 	SYMBOL = 11,
 	NUMBER,
+	STR,
+	BOOL,
 	DEFINE,
 	LAMBDA,
 	CALL,
@@ -25,7 +33,7 @@ typedef enum NodeType {
 	BUILTIN,
 	LIST,
 	PAIR,
-	EMPTY
+	ATOM
 } NodeType;
 
 typedef struct Node {
@@ -41,6 +49,16 @@ typedef struct NumNode {
 	NodeType type;
 	int value;
 } NumNode ;
+
+typedef struct StrNode {
+	NodeType type;
+	Refer name;
+} StrNode ;
+
+typedef struct BoolNode {
+	NodeType type;
+	int value;
+} BoolNode ;
 
 typedef struct PairNode {
 	NodeType type;
@@ -85,8 +103,14 @@ typedef struct BuiltinNode {
 	Node * (* addr)(ListNode *, Env *);
 } BuiltinNode ;
 
+typedef struct AtomNode {
+	NodeType type;
+	Refer	 name;
+} AtomNode ;
 
 SymNode * newSymNode (Refer name) ;
+StrNode * newStrNode (Refer name) ;
+BoolNode* newBoolNode(int value)  ;
 NumNode * newNumNode (int  value) ;
 PairNode* newPairNode(Node * car, Node * cdr) ;
 ListNode* newListNode(Node * car, Node * cdr) ; 
@@ -95,6 +119,7 @@ DefNode* newDefNode(SymNode * sym, ListNode * formal, Node * body) ;
 CallNode* newCallNode(Node * sym, ListNode * args) ;
 ProcNode* newProcNode(ListNode * formal, Node * body, Env * env) ;
 BuiltinNode * newBuiltinNode (Node * (*)(ListNode *, Env *)) ;
+AtomNode* newAtomNode(Refer name) ;
 
 Refer  str2Refer(char *) ;
 char * refer2Str(Refer ) ;
@@ -109,6 +134,6 @@ int len(Node * a) ;
 
 
 char * strTable[1984];
-Node empty;
+Node * empty;
 
 #endif
