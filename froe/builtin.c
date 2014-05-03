@@ -58,8 +58,6 @@ Node * buiCdr (ListNode * args, Env * env)
 		exit(0);
 	}
 	if (t->type != PAIR) {
-		printf("!\n");
-		printNode(t);
 		return eval(toPair(t)->cdr, env);
 	} else if (t->type != LIST && t != (Node *) &nil) {
 		return eval((Node *)toList(t)->cdr, env);

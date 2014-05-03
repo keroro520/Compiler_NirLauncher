@@ -8,9 +8,11 @@ froe, Scheme interpreter
 有了大致的雏形
 
 TODO : 
+	* 完善错误恢复
 
-
-
+	* scheme宏		不太了解,待学习
+ 
+	* gc
 
 
 
