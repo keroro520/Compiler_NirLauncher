@@ -5,7 +5,7 @@
 #include "lexer.h"
 #include "structure.h"
 
-#define lexError(s, c) { fprintf(stderr, "Lex error : %s \'%c\'\n", (s), (c)); }
+#define lexError(s, c) { fprintf(stderr, "Lex error : %s \'%c\'\n", (s), (c)); exit(0);}
 
 char c = ' ';
 Token TOKENEOF = {.type = LEXEOF};
@@ -70,7 +70,6 @@ Token nextToken()
 		ret = nextToken();
 		if (0 != strcmp(yytext, "t") && 0 != strcmp(yytext, "f")) {
 			lexError("Unreganize character", yytext[0]);
-			exit(0);
 		}
 		ret.type = yytext[0] == 't' ? BOOLTRUE : BOOLFALSE;
 	} else if (isalpha(c) || isspec(c)) {
@@ -88,7 +87,6 @@ Token nextToken()
 			case ';' : while(getchar() != '\n') ; c = getchar(); return nextToken(); 
 			default  : 
 				lexError("Unreganize character", c);
-				exit(0);
 		}
 	}
 	return ret;

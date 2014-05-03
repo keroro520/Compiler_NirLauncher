@@ -4,8 +4,10 @@
 #include "structure.h"
 #include "lexer.h"
 #include "parser.h"
+#include "eval.h"
 
-#define		error(s)		fprintf(stderr, "%s\n", (s)) 
+#define		error(s,s2)		{ fprintf(stderr, "%s--%s\n", (s), (s2)) ; }
+extern int evalError ;
 static int  depth = 0;
 static bool endOfList = false;
 
@@ -18,14 +20,12 @@ Node * parsePair()
 
 	if (a->type == SYMBOL && 0 == strcmp(refer2Str(toSym(a)->name), "lambda")) {	// (lambda (args*) (body)) 
 		if (nextToken().type != LPARENT) {
-			error("Illegal identifier type");
-			exit(0);
+			error("Illegal identifier type", "expected \'(\'");
 		}
 		depth++;
 		a = (Node *) newLambdaNode(parseList(), parser());
 		if (nextToken().type != RPARENT) {
-			error("Illegal identifier type");
-			exit(0);
+			error("Illegal identifier type", "expected \')\'");
 		}
 		depth--;
 		return a;
@@ -35,17 +35,16 @@ Node * parsePair()
 			a = (Node *) newDefNode(toSym(a), NULL, parser());
 		} else if (a->type == PAIR) {												//(define (f ..) (body)|body)
 			if (toPair(a)->car->type != SYMBOL) {
-				error("Illegal identifier type");
-				exit(0);
+				error("Illegal identifier type", "expected SYMBOL");
 			}
 			a = (Node *) newDefNode(toSym(toPair(a)->car), toList(toPair(a)->cdr), parser());
 		} else {
-			error("Illegal identifier type");
-			exit(0);
+			error("Illegal identifier type", "expected SYMBOL or PROCEDURE");
+			evalError = 1;
+			return (Node *) parseList();
 		}
 		if (nextToken().type != RPARENT) {
-			error("Illegal identifier type");
-			exit(0);
+			error("Illegal identifier type", "expected \')\'");
 		}
 		depth--;
 		return a;
@@ -82,8 +81,7 @@ Node * parser()
 			endOfList = true;
 			depth --;
 			if (depth < 0) {
-				error("Unmatch parenrts");
-				exit(0);
+				error("Unmatch parenrts", "");
 			}
 			return NULL;
 		case NUM :
@@ -99,13 +97,11 @@ Node * parser()
 			return (Node *) newAtomNode(tok.name);
 		case LEXEOF :
 			if (depth != 0) {
-				error("Unmatched parents"); 
-				exit(0);
+				error("Unmatch parents", ""); 
 			}
 			endOfList = true;
 			return NULL;
 		default : 
-			error("Unknown token");
-			exit(0);
+			error("Illegal identifier type", "I don\'t know what is it");
 	}
 }

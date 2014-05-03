@@ -12,6 +12,6 @@ typedef struct Env {
 Node * lookup(Env * env, SymNode * sym) ;
 void updateEnv(Env * env, SymNode * sym, Node * value) ;
 
-extern Env top ;
+Env top ;
 
 #endif

@@ -3,6 +3,7 @@
 #include "environment.h"
 
 extern ListNode nil;
+extern Env top;
 void insertBuiltinNode(char * op, Node * (*f)(ListNode *, Env *) , Env * env) 
 {
 	updateEnv(env, newSymNode(str2Refer(op)), (Node *)(newBuiltinNode(f)));
@@ -10,6 +11,7 @@ void insertBuiltinNode(char * op, Node * (*f)(ListNode *, Env *) , Env * env)
 void initBuiltinNode()
 {
 	nil.type = LIST; nil.car = NULL; nil.cdr = NULL;
+	top.father = NULL;
 
 	insertBuiltinNode((char *)("+"), buiAdd, &top);
 	insertBuiltinNode((char *)("-"), buiSub, &top);

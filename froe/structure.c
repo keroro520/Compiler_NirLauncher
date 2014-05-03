@@ -4,8 +4,11 @@
 #include "environment.h"
 #include "structure.h"
 #include "lexer.h"
+#include "eval.h"
 
+extern int evalError;
 extern ListNode nil;
+
 PairNode * cons(Node * a,Node * b)
 {
     PairNode * t = NEW(PairNode);
@@ -110,6 +113,11 @@ LambdaNode* newLambdaNode(ListNode * formal, Node * body)
 }
 DefNode* newDefNode(SymNode * sym, ListNode * formal, Node * body)
 {
+	if (top.sym[sym->name] && top.sym[sym->name]->type == BUILTIN) {
+		fprintf(stderr, "*** ERROR:define: read-only variable");
+		evalError = 1;
+		return NULL;
+	}
 	DefNode * t = NEW(DefNode);
 	t->type   = DEFINE;
 	t->sym    = sym;

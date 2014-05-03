@@ -8,7 +8,6 @@ froe, Scheme interpreter
 有了大致的雏形
 
 TODO : 
-	* 完善错误恢复
 
 	* scheme宏		不太了解,待学习
  
@@ -17,3 +16,5 @@ TODO :
 
 
 Situation : 
+	* 错误恢复策略 : 词法错误 : 结束程序
+					 其他错误 : 给出错误提示, 结束掉该表达式, 继续解析下面的

@@ -6,15 +6,19 @@
 #include "eval.h"
 #include "environment.h"
 
-#define     error(s)        fprintf(stderr, "%s\n", (s))
+#define     error(s)        { fprintf(stderr, "%s\n", (s)); evalError = 1; }
 
 extern Env top;
+extern int evalError;
 
+void evalInit()
+{
+	evalError = 0;
+}
 Node * reply(ProcNode * f, ListNode * args, Env * env) 
 {
 	if (len((Node *)(f->formal)) != len((Node *)args)) {
 		error("*** ERROR:eval:\n Wrong number of arguments");
-		exit(0);
 	}
 	ProcNode * ff = NEW(ProcNode);								//实例化一个函数..比较低效
 	memcpy(ff, f, sizeof (ProcNode));
@@ -33,12 +37,12 @@ Node * reply(ProcNode * f, ListNode * args, Env * env)
 
 Node * eval(Node * expr, Env * env) 
 {
-	if (!expr) return NULL;
+	if (evalError || !expr) return NULL;
 	Node * f;
 	Env * _env;
 	switch (expr->type) {
 		case NUMBER : case STR : case BOOL : case LIST : case ATOM : return expr;
-		case SYMBOL : return lookup(env, toSym(expr));
+		case SYMBOL : return lookup(env, toSym(expr)); 
 		case PAIR   :
 			return eval((Node *) newCallNode(toPair(expr)->car, (ListNode *) toPair(expr)->cdr), env);	//FIXME 
 		case CALL   : 
@@ -46,13 +50,12 @@ Node * eval(Node * expr, Env * env)
 				f = lookup(env, toSym(toCall(expr)->sym));					
 				if (f->type == BUILTIN) {													// (builtin-func (args))
 					return (toBui(f)->addr)(toCall(expr)->args, env);
-				}
+				} 
 			} else {																	// ( (procedure a func) (args) ) 未测
 				f = eval(toCall(expr)->sym, env);
 			}
 			if (!f || f->type != PROC) {
 				error("ERROR eval\nType \"procedure\" expected, \"bint\" provided ");
-				exit(0);
 			}
 			return reply(toProc(f), toCall(expr)->args, env);		//FIXME shi env 还是roProc(f)->env. 是env, toProc(f)会出现var not bound
 		case LAMBDA :
@@ -66,7 +69,7 @@ Node * eval(Node * expr, Env * env)
 				updateEnv(&top, toDef(expr)->sym, (Node *) newProcNode(toDef(expr)->formal, toDef(expr)->body, _env));
 				updateEnv(_env, toDef(expr)->sym, lookup(&top, toSym(toDef(expr)->sym)));
 			}
-			return NULL;
-		default : error("I think No Default"); exit(0);
+			return lookup(&top, toDef(expr)->sym);
+		default : return NULL;
 	}
 }
