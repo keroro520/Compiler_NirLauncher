@@ -14,7 +14,8 @@ TODO :
 
 
 
-Situation : 
+Situation 
+
 	* 错误恢复策略 
 
 		* 词法错误 : 结束程序
