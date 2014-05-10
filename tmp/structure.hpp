@@ -19,6 +19,8 @@ enum Type {
 	ADD 	= '+',
 	MUL 	= '*',
 	ASSIGN	= '=',
+	SEMICOLON	= ';',
+	EPSILON = '@',
 	LEXEOF 	= '$',
 
 	E 		= 'E',

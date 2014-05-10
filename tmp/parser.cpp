@@ -53,6 +53,8 @@ void reduce(int pid)			//按规则pid归约
 		case 6 : sdt6(p); break;
 		case 7 : sdt7(p); break;
 		case 8 : sdt8(p); break;
+		case 9 : sdt9(p); break;
+		case 10: sdt10(p);break;
 		default : break;
 	}
 	
@@ -63,6 +65,7 @@ void sdt1(Product & p)
 {
 	Node * a = _stack.top().second;
 	_stack.pop();
+	freeNode(_stack.top().second);
 	_stack.pop();
 	Node * b = _stack.top().second;
 	_stack.pop();
@@ -86,6 +89,7 @@ void sdt3(Product & p)
 {
 	Node * a = _stack.top().second;
 	_stack.pop();
+	freeNode(_stack.top().second);
 	_stack.pop();
 	Node * b = _stack.top().second;
 	_stack.pop();
@@ -106,10 +110,12 @@ void sdt4(Product & p)
 }
 void sdt5(Product & p)
 {
+	freeNode(_stack.top().second);
 	_stack.pop();
 	Node * a = _stack.top().second;
 	a->type  = F;
 	_stack.pop();
+	freeNode(_stack.top().second);
 	_stack.pop();
 	int I = _stack.top().first;
 	_stack.push( Pin(GOTO[I][p.left], a) );
@@ -135,6 +141,7 @@ void sdt8(Product & p)
 {
 	Node * expr = _stack.top().second;
 	_stack.pop();
+	freeNode(_stack.top().second);
 	_stack.pop();
 	Node * a    = _stack.top().second;
 	_stack.pop();
@@ -143,7 +150,28 @@ void sdt8(Product & p)
 
 	a->type = E;
 	a->val  = expr->val;
+	freeNode(expr);
 
+	int I = _stack.top().first;
+	_stack.push( Pin(GOTO[I][p.left], a) );
+}
+void sdt9(Product & p)
+{
+	Node * a = _stack.top().second;
+	_stack.pop();
+	freeNode(_stack.top().second);
+	_stack.pop();
+	freeNode(_stack.top().second);
+	_stack.pop();
+
+	int I = _stack.top().first;
+	_stack.push( Pin(GOTO[I][p.left], a) );
+}
+void sdt10(Product & p)
+{
+	Node * a = new Node(EPSILON, 0);
+	freeNode(_stack.top().second);
+	_stack.pop();
 	int I = _stack.top().first;
 	_stack.push( Pin(GOTO[I][p.left], a) );
 }

@@ -35,11 +35,13 @@ Token nextToken()
 		ret.ctx  = str2ref(yytext);
 	} else {
 		switch (c) {
-			case '+' : c = getchar(); ret.type = ADD; 	  ret.ctx = str2ref("+"); break;
-			case '*' : c = getchar(); ret.type = MUL; 	  ret.ctx = str2ref("*"); break;
-			case '(' : c = getchar(); ret.type = LPARENT; ret.ctx = str2ref("("); break;
-			case ')' : c = getchar(); ret.type = RPARENT; ret.ctx = str2ref(")"); break;
-			case '=' : c = getchar(); ret.type = ASSIGN ; ret.ctx = str2ref("="); break;
+			case '+' : c = getchar(); ret.type = ADD; 	     ret.ctx = str2ref("+"); break;
+			case '*' : c = getchar(); ret.type = MUL; 	     ret.ctx = str2ref("*"); break;
+			case '(' : c = getchar(); ret.type = LPARENT;   ret.ctx = str2ref("("); break;
+			case ')' : c = getchar(); ret.type = RPARENT;   ret.ctx = str2ref(")"); break;
+			case '=' : c = getchar(); ret.type = ASSIGN ;   ret.ctx = str2ref("="); break;
+			case ';' : c = getchar(); ret.type = SEMICOLON; ret.ctx = str2ref("="); break;
+			case '@' : c = getchar(); ret.type = EPSILON;   ret.ctx = str2ref("="); break;
 			default  : lexError("Unreganize character", c); exit(0); 
 		}
 	}

@@ -18,6 +18,8 @@ void sdt5(Product & p) ;
 void sdt6(Product & p) ;
 void sdt7(Product & p) ;
 void sdt8(Product & p) ;
+void sdt9(Product & p) ;
+void sdt10(Product & p) ;
 
 
 extern std :: stack<Pin>  _stack;

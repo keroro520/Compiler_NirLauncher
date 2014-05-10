@@ -10,12 +10,14 @@ int  env[1984];
 
 void updateEnv(Node * a, int val)
 {
+	printf("!  %d  %s\n", a->val, ref2str(a->val));
     env[a->val] = val ;
     boo[a->val] = true;
 }
 
 int lookup(int i)
 {
+	printf("?  %d  %s\n", i, ref2str(i));
     if (boo[i] == false) {
         fprintf(stderr, "未定义变量 %s\n", ref2str(i));
         exit(0);
