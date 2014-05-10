@@ -2,8 +2,26 @@
 #include <string.h>
 #include <stdlib.h>
 #include "environment.hpp"
+#include "structure.hpp"
 
 char * strTable[1984];
+bool boo[1984] = {0};
+int  env[1984];
+
+void updateEnv(Node * a, int val)
+{
+    env[a->val] = val ;
+    boo[a->val] = true;
+}
+
+int lookup(int i)
+{
+    if (boo[i] == false) {
+        fprintf(stderr, "未定义变量 %s\n", ref2str(i));
+        exit(0);
+    }
+    return env[i];
+}
 
 Refer str2ref(const char * s)
 {

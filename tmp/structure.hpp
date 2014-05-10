@@ -12,11 +12,13 @@ template<class T, class T2> bool IN(T C, T2 x)
 }
 
 enum Type {
+	NUM		= '1',
 	ID 		= 'i',
 	LPARENT = '(',
 	RPARENT = ')',
 	ADD 	= '+',
 	MUL 	= '*',
+	ASSIGN	= '=',
 	LEXEOF 	= '$',
 
 	E 		= 'E',

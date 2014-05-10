@@ -11,6 +11,7 @@ stack<Pin> _stack;
 
 void parser()
 {
+	while (!_stack.empty()) _stack.pop();
 	_stack.push(Pin(0, newNode(E, 0)));
 	Token tok = nextToken();
 	while (true) {
@@ -28,7 +29,7 @@ void parser()
 			reduce(-action[I][a]);
 		}
 	}
-	printf("接受 %d\n", _stack.size());
+	printf("接受 %d\n", _stack.top().second->val);
 }
 
 void shift(int I, Token tok)
@@ -50,6 +51,8 @@ void reduce(int pid)			//按规则pid归约
 		case 4 : sdt4(p); break;
 		case 5 : sdt5(p); break;
 		case 6 : sdt6(p); break;
+		case 7 : sdt7(p); break;
+		case 8 : sdt8(p); break;
 		default : break;
 	}
 	
@@ -115,7 +118,32 @@ void sdt6(Product & p)
 {
 	Node * a = _stack.top().second;
 	a->type = F;
+	a->val  = lookup(a->val);
 	_stack.pop();
+	int I = _stack.top().first;
+	_stack.push( Pin(GOTO[I][p.left], a) );
+}
+void sdt7(Product & p)
+{
+	Node * a = _stack.top().second;
+	a->type = F;
+	_stack.pop();
+	int I = _stack.top().first;
+	_stack.push( Pin(GOTO[I][p.left], a) );
+}
+void sdt8(Product & p)
+{
+	Node * expr = _stack.top().second;
+	_stack.pop();
+	_stack.pop();
+	Node * a    = _stack.top().second;
+	_stack.pop();
+
+	updateEnv(a, expr->val);
+
+	a->type = E;
+	a->val  = expr->val;
+
 	int I = _stack.top().first;
 	_stack.push( Pin(GOTO[I][p.left], a) );
 }
