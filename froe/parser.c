@@ -5,6 +5,7 @@
 #include "lexer.h"
 #include "parser.h"
 #include "eval.h"
+#include "gc.h"
 
 #define		error(s,s2)		{ fprintf(stderr, "%s--%s\n", (s), (s2)) ; }
 extern int evalError ;
@@ -23,21 +24,26 @@ Node * parsePair()
 			error("Illegal identifier type", "expected \'(\'");
 		}
 		depth++;
-		a = (Node *) newLambdaNode(parseList(), parser());
+		//a = (Node *) newLambdaNode(parseList(), parser());				///
+		gc(a, ((Node *) newLambdaNode(parseList(), parser())));
 		if (nextToken().type != RPARENT) {
 			error("Illegal identifier type", "expected \')\'");
 		}
 		depth--;
+		decrease(a);
 		return a;
 	} else if (a->type == SYMBOL && 0 == strcmp(refer2Str(toSym(a)->name), "define")) {	
-		a = parser();
+		//a = parser();
+		gc(a, parser());					///
 		if (a->type == SYMBOL) {													//(define x (y)|y) 
-			a = (Node *) newDefNode(toSym(a), NULL, parser());
+			//a = (Node *) newDefNode(toSym(a), NULL, parser());
+			gc(a, (Node *) newDefNode(toSym(a), NULL, parser())); 			///
 		} else if (a->type == PAIR) {												//(define (f ..) (body)|body)
 			if (toPair(a)->car->type != SYMBOL) {
 				error("Illegal identifier type", "expected SYMBOL");
 			}
-			a = (Node *) newDefNode(toSym(toPair(a)->car), toList(toPair(a)->cdr), parser());
+			//a = (Node *) newDefNode(toSym(toPair(a)->car), toList(toPair(a)->cdr), parser());
+			gc(a, (Node *) newDefNode(toSym(toPair(a)->car), toList(toPair(a)->cdr), parser())); 	///
 		} else {
 			error("Illegal identifier type", "expected SYMBOL or PROCEDURE");
 			evalError = 1;
@@ -47,6 +53,7 @@ Node * parsePair()
 			error("Illegal identifier type", "expected \')\'");
 		}
 		depth--;
+		decrease(a);
 		return a;
 	} else {
 		ListNode * b = parseList();

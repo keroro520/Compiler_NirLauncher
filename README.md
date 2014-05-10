@@ -1,25 +1,15 @@
+***Froe*** 是我学习编译器时候写的程序集
 
-froe, Scheme interpreter
-因为之前看过了天弋娘的代码, 又很喜欢他那优美的码风, 不知不觉就按他的框架来写了.
+* froe : scheme解释器, 参考了innocentim的[Evil](https://github.com/innocentim/Evil)
 
+* little tools : 写的一些小工具
 
+	* Lisp_calc(Java) : 借助ANTLR_4写的lisp计算器
+	
+	* SLR语法分析器(C++)
+	
+	* 根据文法生成FIRST-FOLLOW(Python) : 其实上个程序"SLR语法分析器也能实现"
 
+	* 由正则表达式画出NFA和DFA图(Python)  
 
-
-TODO : 
-
-	* scheme宏		不太了解,待学习
- 
-
-
-
-Situation 
-
-	* 错误恢复策略 
-
-		* 词法错误 : 结束程序
-
-		* 其他错误 : 给出错误提示, 结束掉该表达式, 继续解析下面的
-
-	* gc
-		* 想想还是算了, 虽说原理很简单, 但实现起来好麻烦, 要嵌好多gc语句到代码里.=_=
+	* simple_interpreter.py : 一开始用来练手的scheme解释器, 没什么实现
