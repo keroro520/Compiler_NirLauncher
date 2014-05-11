@@ -1,4 +1,6 @@
 ### sdt练手
+* 学习目的 : sdt
+
 语法存在grammar.txt里面.
 
 输入串在为stdin

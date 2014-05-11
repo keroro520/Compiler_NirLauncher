@@ -44,7 +44,7 @@ class Node {
 	Node () { }
 	Node (Type type, int val) : type(type), val(val) { }
 	Node (Token tok) : type(tok.type) {
-		val = 1;					//FIXME
+		val = tok.ctx;					//FIXME
 	}
 } ;
 

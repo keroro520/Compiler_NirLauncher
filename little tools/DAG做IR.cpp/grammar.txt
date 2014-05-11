@@ -1,0 +1,10 @@
+E : E + T
+E : T
+T : T * F
+T : F
+F : ( E )
+F : i
+F : 1
+E : i = E ;
+E : E ; E
+E : @
